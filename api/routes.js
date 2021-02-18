@@ -7,4 +7,6 @@ module.exports = function (app) {
         .get(controller.derivePrivateKey);
     app.route('/create-root-master-pair')
         .get(controller.createRootMasterPair);
+    app.route('/create-tor-url')
+        .get(controller.createTorUrl)
 };
