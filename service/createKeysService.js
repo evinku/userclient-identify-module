@@ -20,6 +20,11 @@ var createKeysService = {
         res.send({ xPrv })
     },
     derivePrivateKeyInWif: function (req, res, next) {
+        if (!fs.existsSync('privateMaster.key')) {
+            res.send({ message: 'No Root Extended Private Key exists.' })
+            return
+        }
+
         const accountNumber = req.params.accountNumber
         let path = `m/${accountNumber}/0`
 

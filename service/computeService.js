@@ -7,6 +7,12 @@ var bitcoin = require('bitcoinjs-lib')
 var computeService = {
     computeOnionAddress: (req, res, next) => {
         const publicKey = getRandomPublicKey()
+
+        if (!publicKey) {
+            res.send({ message: "No Public Keys available. Please derive some" })
+            return
+        }
+
         const onionAddress = encodePublicKeyToOnionAddress(publicKey)
 
         res.send({ publicKey, onionAddress })

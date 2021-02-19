@@ -27,7 +27,7 @@ var signatureService = {
         const keyPair = bitcoin.ECPair.fromWIF(allWifs[index]);
         var signature = bitcoinMessage.sign(message, keyPair.privateKey, keyPair.compressed).toString('base64')
 
-        res.send({ signature })
+        res.send({ onionAddress, message, signature })
 
     },
     checkSignature: (req, res, next) => {
