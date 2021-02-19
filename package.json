@@ -12,6 +12,7 @@
     "@psf/bip32-utils": "^0.13.1",
     "base32": "^0.0.6",
     "bitcoinjs-lib": "^5.2.0",
+    "bitcoinjs-message": "^2.2.0",
     "crypto-js": "^4.0.0",
     "express": "^4.17.1",
     "js-sha3": "^0.8.0",

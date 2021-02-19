@@ -1,25 +1,47 @@
 'use strict';
 
-var createKeys = require('../service/createKeys');
-var createUrl = require('../service/createUrl');
+var createKeysService = require('../service/createKeysService');
+var computeService = require('../service/computeService');
+var signatureService = require('../service/signatureService');
 
 var controllers = {
-    createRootMasterPair: function (req, res) {
-        createKeys.createRootMasterPair(req, res, function (err, dist) {
+    createRootPrivateKey: function (req, res) {
+        createKeysService.createRootPrivateKey(req, res, function (err, dist) {
             if (err)
                 res.send(err);
             res.json(dist);
         });
     },
     derivePrivateKey: function (req, res) {
-        createKeys.derivePrivateKey(req, res, function (err, dist) {
+        createKeysService.derivePrivateKey(req, res, function (err, dist) {
             if (err)
                 res.send(err);
             res.json(dist);
         })
     },
-    createTorUrl: function (req, res) {
-        createUrl.createTorUrl(req, res, function (err, dist) {
+    computeOnionAddress: function (req, res) {
+        computeService.computeOnionAddress(req, res, function (err, dist) {
+            if (err)
+                res.send(err);
+            res.json(dist);
+        })
+    },
+    computePublicKey: function (req, res) {
+        computeService.computePublicKey(req, res, function (err, dist) {
+            if (err)
+                res.send(err);
+            res.json(dist);
+        })
+    },
+    sendSignature: function (req, res) {
+        signatureService.sendSignature(req, res, function (err, dist) {
+            if (err)
+                res.send(err);
+            res.json(dist);
+        })
+    },
+    checkSignature: function (req, res) {
+        signatureService.checkSignature(req, res, function (err, dist) {
             if (err)
                 res.send(err);
             res.json(dist);
