@@ -6,7 +6,7 @@ module.exports = function (app) {
     app.route('/create-root-private-key')
         .get(controller.createRootPrivateKey);
     app.route('/derive-private-key/:accountNumber')
-        .get(controller.derivePrivateKey);
+        .get(controller.derivePrivateKeyInWif);
     app.route('/compute-onion-address')
         .get(controller.computeOnionAddress)
     app.route('/compute-public-key/:onionAddress')

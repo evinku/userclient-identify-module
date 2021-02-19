@@ -12,8 +12,8 @@ var controllers = {
             res.json(dist);
         });
     },
-    derivePrivateKey: function (req, res) {
-        createKeysService.derivePrivateKey(req, res, function (err, dist) {
+    derivePrivateKeyInWif: function (req, res) {
+        createKeysService.derivePrivateKeyInWif(req, res, function (err, dist) {
             if (err)
                 res.send(err);
             res.json(dist);

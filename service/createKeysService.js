@@ -19,44 +19,43 @@ var createKeysService = {
 
         res.send({ xPrv })
     },
-    derivePrivateKey: function (req, res, next) {
-
+    derivePrivateKeyInWif: function (req, res, next) {
         const accountNumber = req.params.accountNumber
         let path = `m/${accountNumber}/0`
 
-        const derivedPrivateKeys = getDerivedPrivateKeys() || {}
+        const wifs = getWifs() || {}
 
-        if (!derivedPrivateKeys[accountNumber]) {
-            derivedPrivateKeys[accountNumber] = []
+        if (!wifs[accountNumber]) {
+            wifs[accountNumber] = []
         }
 
-        if (derivedPrivateKeys[accountNumber].length > 0) {
-            const lastDerivedPrivateKey = derivedPrivateKeys[accountNumber][derivedPrivateKeys[accountNumber].length - 1]
-            const node = bip32.fromBase58(lastDerivedPrivateKey)
-            path = `m/${accountNumber}/${node.index + 1}`
+        if (wifs[accountNumber].length > 0) {
+            const wifsForAccount = wifs[accountNumber]
+            const len = wifsForAccount.length
+            path = `m/${accountNumber}/${len + 1}`
         }
         const xPrvRoot = fs.readFileSync('privateMaster.key', 'utf8')
         const childNode = deriveKeyPairFromRoot(bip32.fromBase58(xPrvRoot), path)
 
-        derivedPrivateKeys[accountNumber].push(getXPrv(childNode))
-        writeDerivedPrivateKeys(derivedPrivateKeys, accountNumber)
+        wifs[accountNumber].push(childNode.toWIF())
+        writeDerivedWifs(wifs)
 
-        res.json(`Child node created (path: ${path}) ${getXPrv(childNode)}`)
+        res.json({ message: "Child node created", path, WIF: childNode.toWIF() })
     }
 };
 
-function writeDerivedPrivateKeys(privateKeys) {
-    json = JSON.stringify(privateKeys)
-    fs.writeFile(`derivedPrivateKeys.json`, json, 'utf8', function (err) {
+function writeDerivedWifs(wifs) {
+    json = JSON.stringify(wifs)
+    fs.writeFile(`derivedWifs.json`, json, 'utf8', function (err) {
         if (err) return console.log(err);
     });
 }
 
-function getDerivedPrivateKeys() {
-    if (!fs.existsSync(`derivedPrivateKeys.json`)) {
+function getWifs() {
+    if (!fs.existsSync(`derivedWifs.json`)) {
         return null
     }
-    return JSON.parse(fs.readFileSync(`derivedPrivateKeys.json`, 'utf8'))
+    return JSON.parse(fs.readFileSync(`derivedWifs.json`, 'utf8'))
 }
 
 function getXPrv(node) {

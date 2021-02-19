@@ -1,12 +1,12 @@
-let bip32 = require('bip32')
 fs = require('fs');
 var base32 = require('base32')
 var sha3_256 = require('js-sha3').sha3_256;
 var truncate = require("truncate-utf8-bytes")
+var bitcoin = require('bitcoinjs-lib')
 
 var computeService = {
     computeOnionAddress: (req, res, next) => {
-        const publicKey = getPublicKey()
+        const publicKey = getRandomPublicKey()
         const onionAddress = encodePublicKeyToOnionAddress(publicKey)
 
         res.send({ publicKey, onionAddress })
@@ -19,19 +19,23 @@ var computeService = {
     }
 };
 
-function getPublicKey() {
-    if (!fs.existsSync(`privateMaster.key`)) {
-        return null
-    }
-    const xPrvRoot = fs.readFileSync('privateMaster.key', 'utf8')
-    const root = bip32.fromBase58(xPrvRoot)
+function getRandomPublicKey() {
+    const derivedWifs = JSON.parse(fs.readFileSync(`derivedWifs.json`, 'utf8'))
 
-    return root.publicKey.toString('hex')
+    let allWifs = []
+    Object.keys(derivedWifs).forEach(account => {
+        allWifs = [...allWifs, ...derivedWifs[account]]
+    })
+
+    const publicKeys = allWifs.map(wif => bitcoin.ECPair.fromWIF(wif).publicKey.toString('hex'))
+    const randomPublicKey = publicKeys[Math.floor(Math.random() * publicKeys.length)]
+
+    return randomPublicKey
 }
 
 function decodeOnionAddressToPublicKey(onionAddress) {
-    const adress = onionAddress.toString().split('.')[0].trim()
-    const decodeAddress = base32.decode(adress)
+    const address = onionAddress.toString().split('.')[0].trim()
+    const decodeAddress = base32.decode(address)
     const publicKey = decodeAddress.slice(0, -3)
 
     return publicKey
